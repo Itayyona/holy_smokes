@@ -1,0 +1,17 @@
+{
+  "name": "Holy Smokes",
+  "short_name": "Holy Smokes",
+  "description": "Your personal quit-smoking journey tracker",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0c12",
+  "theme_color": "#C9A227",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

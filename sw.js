@@ -1,5 +1,13 @@
-const CACHE = 'holysmokes-v3';
-const ASSETS = ['/', '/index.html', '/style.css', '/app.js', '/dashboard.js', '/manifest.json'];
+const CACHE = 'holysmokes-v4';
+const ASSETS = [
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './dashboard.js',
+  './manifest.json',
+  './icon.svg',
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));

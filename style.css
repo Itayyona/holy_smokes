@@ -749,7 +749,7 @@ body {
   .date-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (min-width: 520px) {
-  #app { flex-direction: row; align-items: flex-start; justify-content: center; gap: 0; padding: 20px; }
+  #wizard-view { flex-direction: row; align-items: flex-start; justify-content: center; gap: 0; padding: 20px; }
   .mascot-wrap { margin-top: 85px; margin-right: -16px; z-index: 3; }
   .wizard-wrap { margin-top: 20px; }
 }
@@ -760,6 +760,14 @@ body {
 
 /* Ensure hidden attribute works */
 [hidden] { display: none !important; }
+
+/* View routing wrapper: owns the mascot + card side-by-side layout */
+#wizard-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
 
 /* ── Dashboard view layout ── */
 #dashboard-view {

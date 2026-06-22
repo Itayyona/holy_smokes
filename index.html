@@ -30,6 +30,20 @@
   <!-- ═══════════════ WIZARD VIEW ═══════════════ -->
   <div id="wizard-view" class="view">
 
+    <!-- Header bar: always full-width across both columns -->
+    <header class="wizard-header">
+      <div class="brand">
+        <svg class="brand-halo" viewBox="0 0 30 12" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="15" cy="6" rx="13" ry="5" fill="none" stroke="#FFD700" stroke-width="2.2"/>
+        </svg>
+        Holy Smokes
+      </div>
+      <div class="step-dots" id="stepDots"></div>
+    </header>
+
+    <!-- Two-column body: mascot left, questionnaire card right -->
+    <div class="wizard-body">
+
     <!-- Mascot: Holy the Saint Cigarette -->
     <div class="mascot-wrap" id="mascot" aria-hidden="true">
       <svg class="mascot-svg" id="mascotSvg" viewBox="0 0 100 210" xmlns="http://www.w3.org/2000/svg">
@@ -124,23 +138,16 @@
       <div class="catchphrase" id="catchphrase"></div>
     </div>
 
-    <!-- Wizard shell -->
+    <!-- Questionnaire card + nav -->
     <main class="wizard-wrap" id="wizard">
-      <header class="wizard-header">
-        <div class="brand">
-          <svg class="brand-halo" viewBox="0 0 30 12" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="15" cy="6" rx="13" ry="5" fill="none" stroke="#FFD700" stroke-width="2.2"/>
-          </svg>
-          Holy Smokes
-        </div>
-        <div class="step-dots" id="stepDots"></div>
-      </header>
       <div class="step-stage" id="stepStage"></div>
       <footer class="wizard-footer" id="wizardFooter">
         <button class="btn-back" id="btnBack" onclick="prevStep()">← Back</button>
         <button class="btn-next" id="btnNext" onclick="nextStep()">Continue →</button>
       </footer>
     </main>
+
+    </div><!-- /wizard-body -->
 
   </div><!-- /wizard-view -->
 

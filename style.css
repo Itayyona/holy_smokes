@@ -93,9 +93,8 @@ body {
 .mascot-wrap {
   position: relative;
   z-index: 2;
-  width: 130px;
+  width: 180px;
   flex-shrink: 0;
-  margin-top: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -248,7 +247,9 @@ body {
 .wizard-wrap {
   position: relative;
   z-index: 2;
-  width: min(520px, 100vw - 24px);
+  flex: 1;
+  max-width: 560px;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -258,7 +259,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 4px;
+  padding: 16px 24px;
+  flex-shrink: 0;
+  width: 100%;
 }
 .brand {
   font-family: var(--font-head);
@@ -745,13 +748,13 @@ body {
 @media (max-width: 480px) {
   .step-card { padding: 22px 18px 18px; }
   .step-q { font-size: 1.2rem; }
-  .wizard-wrap { width: 100vw; padding: 0 8px 24px; }
   .date-grid { grid-template-columns: repeat(2, 1fr); }
 }
-@media (min-width: 520px) {
-  #wizard-view { flex-direction: row; align-items: flex-start; justify-content: center; gap: 0; padding: 20px; }
-  .mascot-wrap { margin-top: 85px; margin-right: -16px; z-index: 3; }
-  .wizard-wrap { margin-top: 20px; }
+/* Mobile: stack mascot above card */
+@media (max-width: 639px) {
+  .wizard-body { flex-direction: column; align-items: center; gap: 1rem; padding: 8px 12px 24px; }
+  .mascot-wrap { width: 130px; }
+  .wizard-wrap { width: 100%; max-width: 100%; }
 }
 
 /* ══════════════════════════════════════
@@ -761,12 +764,24 @@ body {
 /* Ensure hidden attribute works */
 [hidden] { display: none !important; }
 
-/* View routing wrapper: owns the mascot + card side-by-side layout */
+/* Wizard view: full-height column — header on top, body fills rest */
 #wizard-view {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   width: 100%;
+  min-height: 100dvh;
+}
+
+/* Two-column row: mascot left, card right */
+.wizard-body {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 0 24px 32px;
+  flex: 1;
 }
 
 /* ── Dashboard view layout ── */

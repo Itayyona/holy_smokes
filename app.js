@@ -558,7 +558,6 @@ function completeWizard() {
   const isToday  = quitDate.getTime() === today.getTime();
 
   const plan = generatePlan();
-
   localStorage.setItem('qs_plan', JSON.stringify({
     ...answers,
     plan,
@@ -566,29 +565,16 @@ function completeWizard() {
     quitStarted: isToday ? new Date().toISOString() : null,
   }));
 
-  // Route to dashboard immediately if quit starts today
-  if (isToday) {
-    setMascot('celebratory', 'Halo at full brightness. Let\'s go. ✨');
-    setTimeout(() => {
-      if (typeof showDashboard === 'function') showDashboard();
-    }, 600);
-    return;
-  }
-
-  // Update mascot
   setMascot('celebratory', 'Halo at full brightness. Let\'s go. ✨');
-
-  const stage    = document.getElementById('stepStage');
-  const existing = stage.querySelector('.step-card');
-  const outClass = 'slide-out-left';
 
   const quitLabel = isToday
     ? 'Today — right now! 🚀'
     : quitDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
-  const daysNote = isToday
-    ? 'Your streak starts <strong>now</strong>. The dashboard is coming soon — you\'re all set!'
-    : `Your quit day is in <strong>${Math.round((quitDate - today) / 86400000)} day(s)</strong>. Use that time to prepare — remove cigarettes from your home on the night before.`;
+  const daysUntil = Math.round((quitDate - today) / 86400000);
+  const daysNote  = isToday
+    ? 'Your streak starts <strong>now</strong>. Head to the dashboard to track every smoke-free minute.'
+    : `Your quit day is in <strong>${daysUntil} day${daysUntil !== 1 ? 's' : ''}</strong>. Use that time to prepare — remove cigarettes from your home the night before.`;
 
   const completeHtml = `
     <div class="complete-wrap">
@@ -597,14 +583,17 @@ function completeWizard() {
       <p class="complete-body">Your personalized quit plan is ready.<br>${daysNote}</p>
       <div class="complete-date-badge">📅 ${quitLabel}</div>
       <div class="complete-date-label">Your quit date</div>
-      <button class="btn-next start" style="margin-top:24px;width:100%" onclick="if(typeof showDashboard==='function')showDashboard()">
+      <button class="btn-next start" style="margin-top:24px;width:100%"
+        onclick="if(typeof showDashboard==='function')showDashboard()">
         Start My Journey →
       </button>
     </div>
   `;
 
+  const stage    = document.getElementById('stepStage');
+  const existing = stage.querySelector('.step-card');
   if (existing) {
-    existing.classList.add(outClass);
+    existing.classList.add('slide-out-left');
     existing.addEventListener('animationend', () => {
       stage.innerHTML = `<div class="step-card slide-in-right">${completeHtml}</div>`;
     }, { once: true });
@@ -658,9 +647,7 @@ function rotateCatchphrases() {
   if (raw) {
     try {
       const plan = JSON.parse(raw);
-      const qd   = new Date((plan.quit_date || '') + 'T00:00:00');
-      const today = new Date(); today.setHours(0, 0, 0, 0);
-      if (qd <= today) return; // dashboard.js handles routing
+      if (plan.quit_date) return; // dashboard.js handles routing regardless of date
     } catch (_) {}
   }
   rotateCatchphrases();

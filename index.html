@@ -158,18 +158,18 @@
     <div class="db-stats-bar">
       <div class="stat-item">
         <div class="stat-val" id="statTime">—</div>
-        <div class="stat-lbl">smoke-free</div>
+        <div class="stat-lbl" id="statTimeLbl">smoke-free</div>
       </div>
       <div class="stat-div"></div>
       <div class="stat-item">
         <div class="stat-val" id="statCigs">0</div>
-        <div class="stat-lbl">not smoked</div>
+        <div class="stat-lbl" id="statCigsLbl">not smoked</div>
       </div>
       <div class="stat-div"></div>
       <div class="stat-item">
         <div class="stat-val" id="statMoney">$0</div>
         <div class="stat-lbl stat-lbl-money">
-          saved&thinsp;<button class="curr-pill" onclick="toggleCurrMenu(event)"><span id="currCode">USD</span> ▾</button>
+          <span id="statMoneyLblText">saved</span>&thinsp;<button class="curr-pill" onclick="toggleCurrMenu(event)"><span id="currCode">USD</span> ▾</button>
         </div>
       </div>
     </div>
@@ -303,6 +303,10 @@
       <div class="slip-zone">
         <button class="btn-slip" onclick="openSlip()">I had a cigarette</button>
         <p class="slip-note">It happens. We don't shame here.</p>
+      </div>
+
+      <div class="db-reset-row">
+        <button class="db-reset-btn" onclick="resetApp()">↩ start over / update plan</button>
       </div>
 
       <div class="sos-spacer"></div>

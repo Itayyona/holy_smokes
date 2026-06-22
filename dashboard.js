@@ -155,6 +155,13 @@ function getOriginalQuit() {
   return new Date(dbPlan.quit_date + 'T00:00:00');
 }
 
+function isPreQuit() {
+  if (!dbPlan || !dbPlan.quit_date) return false;
+  const qd    = new Date(dbPlan.quit_date + 'T00:00:00');
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  return qd > today;
+}
+
 /* ── Live stats ── */
 function startStats() {
   updateStats();
@@ -163,14 +170,42 @@ function startStats() {
 }
 
 function updateStats() {
+  const el = id => document.getElementById(id);
+
+  if (isPreQuit()) {
+    // Countdown to quit day
+    const qd        = new Date(dbPlan.quit_date + 'T00:00:00');
+    const remaining = qd.getTime() - Date.now();
+    const cigsDay   = dbPlan.cigs_per_day || 10;
+
+    if (el('statTime'))         el('statTime').textContent         = fmtElapsed(Math.max(0, remaining));
+    if (el('statTimeLbl'))      el('statTimeLbl').textContent      = 'until quit day';
+    if (el('statCigs'))         el('statCigs').textContent         = cigsDay;
+    if (el('statCigsLbl'))      el('statCigsLbl').textContent      = 'cigs / day';
+    if (el('statMoneyLblText')) el('statMoneyLblText').textContent = 'daily cost';
+    const dailyCost = (cigsDay / CIGS_PER_PACK) * getPackPrice();
+    if (el('statMoney')) el('statMoney').textContent = getCurrSymbol() + dailyCost.toFixed(2);
+
+    // Automatically flip to smoke-free mode when quit date arrives
+    if (remaining <= 0) {
+      dbPlan.quitStarted = qd.toISOString();
+      localStorage.setItem('qs_plan', JSON.stringify(dbPlan));
+      renderHero();
+    }
+    return;
+  }
+
+  // Smoke-free mode
   const elapsedMs  = Date.now() - getStreakStart().getTime();
   const elapsedDay = elapsedMs / 86400000;
   const cigsDay    = dbPlan.cigs_per_day || 10;
 
-  const el = id => document.getElementById(id);
-  if (el('statTime'))  el('statTime').textContent  = fmtElapsed(elapsedMs);
-  if (el('statCigs'))  el('statCigs').textContent  = Math.floor(elapsedDay * cigsDay);
-  if (el('statMoney')) el('statMoney').textContent = getCurrSymbol() + fmtMoney(elapsedDay, cigsDay);
+  if (el('statTime'))         el('statTime').textContent         = fmtElapsed(elapsedMs);
+  if (el('statTimeLbl'))      el('statTimeLbl').textContent      = 'smoke-free';
+  if (el('statCigs'))         el('statCigs').textContent         = Math.floor(elapsedDay * cigsDay);
+  if (el('statCigsLbl'))      el('statCigsLbl').textContent      = 'not smoked';
+  if (el('statMoneyLblText')) el('statMoneyLblText').textContent = 'saved';
+  if (el('statMoney'))        el('statMoney').textContent        = getCurrSymbol() + fmtMoney(elapsedDay, cigsDay);
 
   checkNewMilestones();
 }
@@ -192,16 +227,29 @@ function fmtMoney(days, cigsDay) {
 
 /* ── Hero ── */
 function renderHero() {
+  const el = id => document.getElementById(id);
+
+  if (isPreQuit()) {
+    const qd       = new Date(dbPlan.quit_date + 'T00:00:00');
+    const today    = new Date(); today.setHours(0, 0, 0, 0);
+    const daysLeft = Math.ceil((qd - today) / 86400000);
+    if (el('dbHeroTitle')) el('dbHeroTitle').textContent = 'Day 0';
+    if (el('dbHeroSub'))   el('dbHeroSub').textContent   =
+      daysLeft === 1
+        ? 'Tomorrow is the day. Remove cigarettes tonight.'
+        : `Get ready — your journey begins in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}.`;
+    setDbMascot('encouraging');
+    return;
+  }
+
   const ms   = Date.now() - getStreakStart().getTime();
   const days = ms / 86400000;
 
-  // Find the matching hero line (highest threshold not exceeded)
   let line = HERO_LINES[0][1];
   for (const [threshold, text] of HERO_LINES) {
     if (days >= threshold) line = text;
   }
 
-  const el = id => document.getElementById(id);
   if (el('dbHeroTitle')) el('dbHeroTitle').textContent = fmtDayLabel(days);
   if (el('dbHeroSub'))   el('dbHeroSub').textContent   = line;
 
@@ -586,16 +634,22 @@ function showToast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('visible'), 4000);
 }
 
-/* ── Boot: check on load if dashboard should show ── */
+/* ── Reset ── */
+function resetApp() {
+  if (!confirm('This will clear your quit plan and all tracked progress. Start over?')) return;
+  ['qs_plan', 'qs_slips', 'qs_cravings', 'qs_celebrated'].forEach(k => localStorage.removeItem(k));
+  window.location.reload();
+}
+
+/* ── Boot: route to dashboard whenever a saved plan exists ── */
 (function checkAndRoute() {
   const raw = localStorage.getItem('qs_plan');
   if (!raw) return;
-  const plan = JSON.parse(raw);
-  const qd   = new Date((plan.quit_date || '') + 'T00:00:00');
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  if (qd <= today) {
-    showView('dashboard-view');
-    // Wait for DOM, then init (app.js may not have finished its own boot yet)
-    setTimeout(initDashboard, 0);
-  }
+  try {
+    const plan = JSON.parse(raw);
+    if (plan.quit_date) {
+      showView('dashboard-view');
+      setTimeout(initDashboard, 0);
+    }
+  } catch (_) {}
 })();

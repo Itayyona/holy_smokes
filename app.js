@@ -597,10 +597,9 @@ function completeWizard() {
       <p class="complete-body">Your personalized quit plan is ready.<br>${daysNote}</p>
       <div class="complete-date-badge">📅 ${quitLabel}</div>
       <div class="complete-date-label">Your quit date</div>
-      <p class="complete-body" style="font-size:0.85rem">
-        Your triggers, coping strategies, and motivation are all saved.<br>
-        The full Holy Smokes dashboard (streak timer, SOS button, craving log) is coming next.
-      </p>
+      <button class="btn-next start" style="margin-top:24px;width:100%" onclick="if(typeof showDashboard==='function')showDashboard()">
+        Start My Journey →
+      </button>
     </div>
   `;
 
